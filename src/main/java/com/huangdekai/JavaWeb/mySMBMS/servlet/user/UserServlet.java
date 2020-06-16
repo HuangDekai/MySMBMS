@@ -1,5 +1,6 @@
 package com.huangdekai.JavaWeb.mySMBMS.servlet.user;
 
+import com.alibaba.fastjson.JSONArray;
 import com.huangdekai.JavaWeb.mySMBMS.Util.Constants;
 import com.huangdekai.JavaWeb.mySMBMS.pojo.User;
 import com.huangdekai.JavaWeb.mySMBMS.service.user.UserService;
@@ -11,6 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Autord: HuangDekai
@@ -21,7 +25,15 @@ import java.io.IOException;
 public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String method = req.getParameter("method");
 
+
+        if (method != null && method.equals("savepwd")){
+            this.updatePassword(req, resp);
+        }
+        else if (method != null && method.equals("pwdmodify")){
+            this.passwordModify(req, resp);
+        }
     }
 
     @Override
@@ -62,5 +74,42 @@ public class UserServlet extends HttpServlet {
     }
 
     // 验证密码
+    public void passwordModify(HttpServletRequest req, HttpServletResponse resp){
+        Object attribute = req.getSession().getAttribute(Constants.USER_SESSION);
+        String oldpassword = req.getParameter("oldpassword");
 
+        Map<String,String> result = new HashMap<>();
+
+        // Session失效
+        if (attribute == null){
+            result.put("result","sessionerror");
+        }
+
+        // 输入密码为空
+        else if (StringUtils.isEmpty(oldpassword)){
+            result.put("result","error");
+        }
+
+        //
+        else{
+            String userPassword = ((User)attribute).getUserPassword();
+            if (userPassword.equals(oldpassword)){
+                result.put("result","true");
+            }
+            else{
+                result.put("result","false");
+            }
+        }
+
+        try {
+            resp.setContentType("application/json");
+
+            PrintWriter writer = resp.getWriter();
+            writer.write(JSONArray.toJSONString(result));
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

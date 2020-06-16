@@ -25,7 +25,14 @@
         <url-pattern>/jsp/logout.do</url-pattern>
     </servlet-mapping>
 
-
+    <servlet>
+        <servlet-name>UserServlet</servlet-name>
+        <servlet-class>com.huangdekai.JavaWeb.mySMBMS.servlet.user.UserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserServlet</servlet-name>
+        <url-pattern>/jsp/user.do</url-pattern>
+    </servlet-mapping>
     <!--  字符编码过滤器  -->
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
@@ -49,4 +56,9 @@
     <welcome-file-list>
         <welcome-file>login.jsp</welcome-file>
     </welcome-file-list>
+
+    <!-- 设置Session失效时间 -->
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
 </web-app>
